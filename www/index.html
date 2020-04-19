@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>High Pop</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="author" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <div class="container">
+	<section class="inicio">
+    <div class="abelha"></div>
+		<div class="melTopo">
+      <button class="informacoes"></button>  
+      <button class="som" estado="desligado"></button>  
+    </div>
+    <h1><span>HIGH</span> <span class="cor">POP</span></h1>
+<!--     <p>Tutorial</p>
+    <ul>
+     <li>-> Toque os ladrilhos na ordem crescente</li>	
+     <li>-> Soma-se ponto ponto quando acerta e desconta-se quando não. </li>
+     <li>-> A dificuldade aumentará gradativamente.</li>
+     <li class="motiva"> BOA SORTE! Será que você consegue? </li>
+   </ul> -->
+   <button class="iniciar">START</button>
+
+   <div class="telaInstrucoes">
+    <div class="textoTelaInstrucoes">
+      <h2>INSTRUÇÕES</h2>
+      <p>-> Clique nos hexágonos do menor para o maior</p>
+      <p>-> Seja rápido ao limpar a rodada, cuidado com o tempo!</p>
+      <p>-> Bata seu próprio recorde!</p>
+      <button class="continuar">CONTINUAR</button>
+      </div>
+   </div>
+ </section>
+
+ <section class="jogar">
+  <div class="anima msg-1">+1</div>
+  <div class="anima2 msg-2">-5s</div>
+  <ul class="topo">
+    <!-- <button>JOGAR</button> -->
+    <li>
+      <!-- <img src="img/feliz.png"> -->
+      <ul>
+        <li><img class="b1"  src="img/bolinha-ama.png"></li>
+        <li><img class="b2" src="img/bolinha-cinza.png"></li>
+        <li><img class="b3" src="img/bolinha-cinza.png"></li>
+      </ul>
+    </li>
+    <li>
+      <h1><span class="minutos">01</span>:<span class="segundos">10</span></h1>
+    </li>
+    <li>
+      <h1>Score <span class="acertos">0</span></h1>
+    </li>
+  </ul>
+
+  <div class="numerinhos">
+    <ul class="numeros">
+      <li class="1">1</li>
+      <li class="2">2</li>
+      <li class="3">3</li>
+      <li class="4">4</li>
+    </ul>
+  </div>
+
+</section>
+
+<section class="final">
+  <h1 class="msg">PARABÉNS!!</h1>
+  <img src="img/winner.png">
+  <h2>Recorde: <span class="recorde">0</span></h2>
+
+  <h3>Sua pontuação: <span class="suaPontuacao">0</span></h3>
+  <button class="reiniciar">REINICIAR</button>
+  <p class="motivacao">Você é realmente incrível!</p>
+
+  <div class="pyro">
+    <div class="before"></div>
+    <div class="after"></div>
+  </div>
+</section>
+
+<section class="finalDerrota">
+  <h1 class="msg">VOCÊ PERDEU!!</h1>
+  <p class="msg2">Tente outra vez!</p>
+  <p class="pontos">Sua pontuação foi de: <span class="pontosVerdade">0</span></p>
+  <img src="img/caveiras.png">
+  <button class="reiniciar">REINICIAR</button>
+  <p class="motivacao">Quem sabe na próxima!</p>
+</section>
+</div>
+
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/easy.js"></script>
+<script>
+  var iniciar = $(".iniciar");
+  var final = $(".final");
+  var finalDerrota = $(".finalDerrota");
+  var inicio = $(".inicio");
+  var reiniciar = $(".reiniciar");
+  var jogar = $(".jogar");
+  var numerosNaTela = $("section.jogar ul.numeros li")
+  var segundos = $(".segundos");
+  var informacoes = $("button.informacoes");
+  var som = $("button.som");
+  var minutos = $(".minutos");
+
+  var musicaJogo = new Audio('audio/musicaFundo.mp3');
+  var musicaVitoria = new Audio('audio/musicaVitoria.mp3');
+  var musicaDerrota = new Audio('audio/musicaDerrota.mp3');
+  var musicaAcerto = new Audio('audio/musicaAcerto.mp3');
+  var musicaErro = new Audio('audio/musicaErro.mp3');
+
+  var vetorNumeros = [];
+  var ini = 0;
+  var pTop = 0;
+  var contandoTempo = false;
+
+/*Negócio da abelha: */
+  $(".abelha").css({left:"90vw", top:"90vh"}).animate({left:"-20vw", top:"0vh"},5000, "linear");
+
+//   iniciar.animate({
+//     transform:"rotate(90deg)"
+//   }, {
+//     step: function( now, fx ) {
+//     //var data = fx.elem.id + " " + fx.prop + ": " + now;
+//     //$( "body" ).append( "<div>" + data + "</div>" );
+//     var qtd = 90;
+//     var cont = 1;
+//     var cont2 = 90/26;
+//     $(this).css({transform:"rotate("+cont*cont2+"deg)"});
+
+//     console.log(now);
+//   }
+// },5000);
+
+//   girarElemento(iniciar, 60, 2000);
+
+//   function girarElemento(elemento,  rotacao, tempo){
+//     contadorG = 0;
+//     intervaloG = setInterval(function(){
+
+//       if(contadorG == tempo/10){
+//         clearInterval(intervaloG);
+//       }else{
+//        var modificacao = rotacao/(tempo/10);
+//        elemento.css({transform:"rotate("+Math.round(cont*modificao)+"deg)"});
+//        cont++;
+
+//      }
+     
+
+//    },10);
+
+//   } 
+  
+  /*Instruções:*/
+  $(".informacoes").on("click", function(){
+    $(".telaInstrucoes").fadeIn();
+  });
+  $(".continuar").on("click", function(){
+    $(".telaInstrucoes").fadeOut();
+  });
+
+  /*Ativar / Desativar som*/
+  som.on("click", function(){
+    if (som.attr("estado") == "ligado") {
+      musicaJogo.pause();
+      $(this).css({background:"url('img/somOff.png') no-repeat 0 0", "background-size":"16vw 8vh"});
+      som.attr("estado", "desligado")
+    } else {
+      musicaJogo.play();
+      $(this).css({background:"url('img/somOn.png') no-repeat 0 0", "background-size":"16vw 8vh"});
+      som.attr("estado", "ligado")
+    }
+  });
+
+  /*Botão iniciar*/
+  iniciar.on("click", function(){
+    vetorNumeros = [];
+    inicio.hide();
+    jogar.show()
+    ini = 1;
+    iniciarJogo();  
+  });
+
+  function iniciarJogo(){
+    pTop = 0;
+
+    for (var i = 4; i > 0; i--) {
+      $("."+i).text(aleatorioNumero(100, -100));
+      vetorNumeros.push(parseInt($("."+i).text()));
+      pTop = pTop + 19; /*Posição Top*/
+      $("."+i).css("top", pTop +"vh");
+      pLeft = aleatorioNumero(75, 15); /*Posição Left*/
+      $("."+i).css("left", pLeft+"vw");
+    }
+
+    /*Aparecer os hexágonos com os números*/
+    numerosNaTela.animate({"width":"2.6em", "font-size":"2em"},200);
+
+    bolinha1 = $("ul.topo li ul li img.b1");
+    bolinha2 = $("ul.topo li ul li img.b2");
+    bolinha3 = $("ul.topo li ul li img.b3");
+
+    if (ini == 1) {
+      numerosNaTela.css("background", "url(img/hexagonal.png) center center no-repeat");
+      numerosNaTela.css("background-size", "100% 100%");
+      bolinha1.attr("src", "img/bolinha-ama.png");
+      bolinha2.attr("src", "img/bolinha-cinza.png");
+      bolinha3.attr("src", "img/bolinha-cinza.png");
+      if (!contandoTempo) {
+        contagemTempo();
+      }
+      ini = 2;
+    } else if( ini == 2){
+      numerosNaTela.css("background", "url(img/hexagonal-red.png) center center no-repeat");
+      numerosNaTela.css("background-size", "100% 100%");
+      bolinha1.attr("src", "img/bolinha-ama.png");
+      bolinha2.attr("src", "img/bolinha-ama.png");
+      bolinha3.attr("src", "img/bolinha-cinza.png");
+      ini = 3;
+    } else if(ini == 3){
+      numerosNaTela.css("background", "url(img/hexagonal-marrom.png) center center no-repeat");
+      numerosNaTela.css("background-size", "100% 100%");
+      bolinha1.attr("src", "img/bolinha-ama.png");
+      bolinha2.attr("src", "img/bolinha-ama.png");
+      bolinha3.attr("src", "img/bolinha-ama.png");
+      ini = 1;
+    }
+
+  }
+
+  function aleatorioNumero(max, min){
+    // Math.floor(Math.random()*(max-min+1)+min);
+    numeroAleatorio = Math.floor((Math.random()*(max-min+1)+(min)));
+    return numeroAleatorio;
+  }
+  function minimo(vetor){
+    return Math.min.apply( Math, vetor);
+  }
+  function contagemTempo(){
+    contandoTempo = true;
+    intervalo = setInterval(function(){
+      if (parseInt(segundos.text()) <= 0 && parseInt(minutos.text()) <= 0){
+        $("section.final h3 .suaPontuacao").text(($(".acertos").text()))
+        if (parseInt($("section.final .recorde").text()) < parseInt($(".acertos").text())) {
+          $("section.final .recorde").text($(".acertos").text());
+        }
+        venceu();
+      } else if(parseInt(segundos.text()) <= 0 && parseInt(minutos.text()) != 0){
+        minutos.text(parseInt(minutos.text()) - 1)
+        if (parseInt(minutos.text()) < 10) {
+          minutos.text("0" + minutos.text());
+        }
+        segundos.text(59)
+      } else {
+        segundos.text(parseInt(segundos.text()) - 1);
+      }  
+      if (parseInt(segundos.text()) < 10) {
+        segundos.text("0" + segundos.text());
+      }
+    },1000)
+  };
+
+  numerosNaTela.on("click", function(){
+    valorAtual = $(this).text();
+    // console.log(vetorNumeros);
+    if (parseInt(valorAtual) == minimo(vetorNumeros)) {
+      musicaAcerto.play();
+      vetorNumeros.splice( vetorNumeros.indexOf(parseInt(valorAtual)), 1);
+      $(".acertos").text(parseInt( $(".acertos").text())+1);
+      $(".msg-1").css({bottom:"75vh"}).animate({opacity:1,bottom:"90vh"},500).animate({opacity:0,bottom:"100vh"},500);
+      
+      if (vetorNumeros.length == 0) {
+        $(this).css({"width":"0", "font-size":"0"},200);
+        if (parseInt($(".acertos").text())%12 == 0) {
+          if (parseInt(segundos.text()) >= 50) {
+            minutos.text("0" + (parseInt(minutos.text()) + 1));
+            segundos.text(parseInt(segundos.text()) - 50)
+            segundos.text("0" + (parseInt(segundos.text()) + 1));
+          } else {
+            segundos.text(parseInt(segundos.text()) + 10);
+          }
+          iniciarJogo();
+        } else {
+          iniciarJogo();
+        }
+      } else {
+         $(this).animate({"width":"0", "font-size":"0"},200);
+      }
+
+    } else {
+      musicaErro.play();
+      navigator.vibrate(200);
+      $(".msg-2").css({bottom:"85vh"}).animate({opacity:1,bottom:"90vh"},200).animate({opacity:0,bottom:"100vh"},200);
+      segundos.text(parseInt(segundos.text()) - 5);
+      if (parseInt(segundos.text()) < 0) {
+        segundos.text("00");
+      }
+    }
+  });
+
+  reiniciar.on("click", function(){
+    musicaDerrota.pause();
+    final.hide();
+    finalDerrota.hide();
+    jogar.hide();
+    segundos.text(30);
+    inicio.show();
+    $(".acertos").text("0");
+    clearInterval(intervalo);
+    musicaVitoria.pause();
+  })
+
+  function perdeu(){
+    musicaDerrota.play();
+    console.log("Acabouuuuuu!");
+    musicaJogo.pause();
+    clearInterval(intervalo);
+    jogar.hide();
+    finalDerrota.show();
+    contandoTempo = false;
+    $(".pontosVerdade").text($(".acertos").text())
+  }
+
+  function venceu(){
+    console.log("VENCEUU!!");
+    contandoTempo = false;
+    clearInterval(intervalo);
+    jogar.hide();
+    final.show();
+    musicaJogo.pause();
+    musicaVitoria.play();
+  }
+
+</script>
+</body>
+</html>
